@@ -6,7 +6,7 @@
 /*   By: hece <hece@student.42kocaeli.com.tr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:37:08 by hece              #+#    #+#             */
-/*   Updated: 2023/03/13 22:02:12 by hece             ###   ########.tr       */
+/*   Updated: 2023/03/14 02:03:41 by hece             ###   ########.tr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,12 @@
 # include <stdarg.h>
 # include <fcntl.h>
 # include <unistd.h>
+
+// WİNDOW
+
+# define HEIGHT		1024
+# define WIDTH		1920
+# define MENU_WIDTH	250
 
 // COLORS
 
