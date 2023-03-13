@@ -1,0 +1,506 @@
+- FDF.H-
+Programın height =1080  width =1920 ve menu width =250 olarak definelanacak
+    
+    calistigimiz macler’de en goze hitap eden goruntuye bu sayede ulasacagiz.
+    
+- 2 tane enum struct yapisi tanimliyorum birisi’nin ismi t_bool olacak ve false ve true barindiracak ikincisi ise t_projection isimli olacak ve iso ve parallel’i barindiracak.
+- s_coord_val struct yapimi olusturuyorum ve ismi’de t_coord_val olacak bu struct yapim
+    
+    mapimin z ‘sini color’ini ve s_coord_val tipinde *next degiskenime sahip olacak.
+    
+- s_point struct yapimi olusturuyorum ismine ise t_point ismini atiyorum. bu yapim
+    
+    x,y,z ve color’i tutacak.
+    
+- s_camera struct yapimi olusturuyorum ve ismi’de t_camera olacak. bu yapim t_precetion tipinde projection tutacak. int tipinde zoom. double alpha,beta,gamma, float z_divisor
+    
+    x_offset,  y_offset barindiracak.
+    
+- s_map struct yapimi olsturuyorum ismine t_map yapiyorum. width height isaretci coord_arr, isaretci colors_arr z_min z_max z_range tutacak.
+- s_mouse struct yapimi olusturuyorum. ismine t_mouse yapiyorum. karakter tipinde is_pressed’imi tutacak, x,y, previous_x ve previous_y’mi tutacak.
+- s_fdf struct yapimi olusturuyorum. ismini t_fdf yapiyorum. void isaretci tipinde 3 degisken mlx,win,img, isaretci karater tipinde data_addr, bits_per_pixel, size_line, endian t_camera tipnde isaretci camera t_map tipinde isaretci map t_mouse tipinde isaretci mouse barindiracak.
+- -MAİN.C-
+    
+    dosyanın idsini içinde tutacak değişken
+    t_map tipinde isaretci değişken
+    t_coord_value tipinde isaretci kordinatların tutulacağı bir değişken sonra NULL değeri ata
+    t_fdf tipinde isaretci değiken
+    hata durumlarını anlamak için errno değişkeni
+    eger arguman sayısı 2 ye esıtse
+    eger map acıp okunacak ve map idsini içinde tutacak değişkene atılacak, dosyanın idsini içinde tutacak değişken 0'dan kucuk ve sifira esit degilse map hatasi donsun
+    
+    - map_init fonksiyonu (t_map isaretci tipinde olacak)t_map tipinde olusan degiskenin struct yapisinin icindekilere sifir veya null atacak ve dondurecek
+        - map’in width’i height’i z_range sifir olacak. coord_arr ve colors_arr null olacak.
+        
+        z_min int max degerini alacak z_max’te intmin degerini alacak.
+        
+        ve degerleri verilmis map’i dondurecegiz.
+        
+    - -MAP OKUMA ZAMANİ- -READ_MAP.C-
+        
+        read_map fonsikiyonum int tipinde olacak(dosyanın idsini tutan değişken, &kordinatların tutulduğu değinen, map değişkeni)
+        \\\eger okunan map -1'e eşit ise
+        map okuma hatası dondursun
+        Read_map fonksiyonu 3 tane parametre alacak. kordinatların tutulduğu değişken iki boyutlu olacak.
+        Char tipinde işaretçi -get_next_line ile okunan verileri icinde tutatacak bir- değişken
+        get_next_line okuduğu surece döngüde kalsın
+        get_next_line ile okunan veriyi char tipinde actigimiz degere atıyoruz.
+        **Okunan veriyi Split ile boşluklardan ayiriyoruz, eger veri ayirilamadiysa map okuma hatası dondursun.
+        static void Parse_line fonksiyonu olacak bu fonksiyon Split ile ayrilmis veriyi, t_coord_val tipindeki değişkeni(bu tip z ekseni renk ve next alıyor), t_map tipindeki değişkeni alcak(t_map mapin uzunluğu genişliği z_min vs.)
+        ---
+        
+        static olacak
+        Int tipinde width
+        t_coord_val tipindeki değişken var olduğu surece döngüde kalsın
+        new_coord fonksiyonum olacak bu fonksiyon splitlenmis veriyi alacak
+        =
+        t_coord_val tipinde bir değişken ve iki boyutlu char tipinde bir değişken
+        t_coord_val tipinde bir değişkene yer acıyorum ve acilmadiysa hata durumu donduruyorum
+        iki boyutlu char tipindeki değişkenimi tekrardan splite atıyorum bu splitte yapacagimiz şey z ve renklerin arasındaki virgülleri ayırmak, maplerde z ve renklerin arasında virgül var ayirmamiz lazım. Eger ayrılmazsa hata durumu dondursun.
+        Eger z yani virgülden önceki 10 luk tabanda bir sayı degilse hata durumu dondursun.
+        
+        10’luk tabanda olup olmadigini ft_isnumber ile kontrol ediyorum.
+        
+        - ft_isnumber fonksiyonum haritamin z’sini alacak(char *) ve tabanin degerini alacak.
+            
+            2 tane size_t tipinde degisken olusturuyorum.
+            
+            32’den kucuk ve esit olan karakterleri geciyorum.
+            
+            eger taban degerim 10’a esit degilse ve ft_has_prefix(&str[i], taban degeri) fonksiyonumdan donen deger false ise ife girsin ve false dondersin.
+            
+            - ft_has_prefix fonksiyonum bool tipinde olacak bu fonksiyonda gelen degerin 2’lik mi 8’lik mi 16’lik tabanda olup olmadigini kontrol ediyoruz
+                
+                bir tane size_t tipinde degisken tanimliyorum.
+                
+                taban 2 veya 8 veya 16 ise if’e giriyorum
+                
+                eger gelen char degerin index’inin 1 fazlasi 0’a esit ise false dondursun
+                
+                eger gelen base degerim 2’ye esit ve str[i] b veya B’ye esit ise true dondursun
+                
+                eger gelen base degerim 16’ya esit ve str[i] x veya X’e esit ise true dondursun
+                
+                eger gelen base 8’e esit ise true dondursun.
+                
+                if’e girmezse de false dondursun
+                
+            
+            taban degerim 2 veya 16’ya esit ise string icinde gezindigim indexi 2 arttiriyorum Çünkü bu numeral sistemlerde "0b" ve "0B" (taban 2 için) ve "0x" ve "0X" (taban 16 için) ön ekleri kullanılır. Bu arttırmanın amacı, girdi dizisinde bu ön ekleri atlamaktır, böylece fonksiyonun geri kalan kısmı belirtilen numeral sisteme göre geçerli rakamlar olup olmadığını kontrol edebilir.
+            
+            eger taban 8’e esit ise  string icinde gezindigim indexi arttiriyorum.
+            
+            eger taban 10’a esit ise ve  string icinde gezindigim index - veya +’ya esit ise  string icinde gezindigim indexi arttiriyorum.
+            
+            ft_isdigit_base fonksiyonumdan donen deger 0’a esit veya 0’dan buyuk ise dongude kalsin  string icinde gezindigim indexi arttiriyorum ve 2. olusturdugum size_t degiskenide arttiriyorum.
+            
+            - ft_isdigit_base fonksiyonum parametre olarak karakter ve taban degerini alacak
+                
+                char isaretci bir degisken ve int bir degisken(karakter dizisinde gezicem) olusturuyorum.
+                
+                karakter isaretci degiskenime yer aciyorum acilip acilmadigini kontrol ediyorum.
+                
+                int degiskenim taban degerimden kucuk oldugu surece dongude kalsin.
+                
+                eger karakter tipindeki dizimde gelen karakter deger esit ise indexi donduruyorum.
+                
+                i’yi arttiriyorum.
+                
+                donguye hic girmezses -1 donderiyorum.
+                
+            
+            eger gelen char isaretci degerim bossa ve size_t degiskenim 1 ise true dondursun degilse false dondursun
+            
+        
+        Eger virgülden sonraki 16'lik tabanda degilse hata durumu.
+        t_coord_val tipinde coord değişkenimin z'sine = ft_atoi fonksiyonumu esitliyoum atoi 0.argumani alacak yani yukseklik
+        t_coord_val tipinde bir değişkenimin color'ina = arguman 1’i yani rengi atiyorum.
+        
+        parts varsa atoi_base’e renk kodumu ve 16 tabanda oldugunu atiyorum bunu t_coord_val tipindeki degiskenimin color’ina atiyorum yoksa -1 atiyorum.
+        
+        - atoi_base renk degerimi alacak ve taban degerini alacak.
+            
+            unsigned long tipinde bir degisken degeri sifir olacak.
+            
+            size_t tipinde bir degisken degeri sifir
+            
+            int tipinde bir degisken degeri 1 
+            
+            gelen string’de 32’den kucuk olanlari geciyorum.
+            
+            eger taban 10’a esit degilse ve ft_has_prefix fonksiyonumdan donen deger false ise false dondersin.
+            
+            eger taban 2 veya 16 ya esit ise size_t degiskenimi 2 arttiriyorum.
+            
+            eger taban 8’e esit ise i’yi arttiriyorum.
+            
+            eger taban 10’a esit ve stringin indexi - veya +’ya esit ise if’e giriyorum
+            
+            int degiskenim = stringimin indexi -’ye esit ise int degiskenime -1 atiyorum degilse 1 atiyorum.
+            
+            ft_isdigit_base’den donen degerim 0’a esit ve sifirdan buyuk oldugu surece dongude kalsin.
+            
+            unsigned long degiskenime = unsigned long * base + ft_isdigit_base fonksiyonumuzdan donen degeri atiyoruz
+            
+            son olarak unsigned long degiskenimle int degiskenimi carpip donduruyorum(tam sayi seklinde).
+            
+        
+        t_coord_val tipinde bir değişkenimin next'ine null atiyorum.
+        Iki boyutlu karakter tipindeki değişkenime free atmam lazım.cunku artık onunla isim bitti.
+        
+        free_strsplit_arr fonksiyonumun ismi ve static void olacak.
+        Ve son olarak t_coord_val tipinde bir değişkenimi donduruyorum.
+        =
+        Push fonksiyonu new_corddan donen değeri. Ve parametre olarak gelen t_coord_val tipindeki değişkenimi alacak.
+        
+        - push fonksiyonu
+            
+            2 tane t_coord_val birisi *new diger coordinate
+            
+            eger coordinate varsa if’e girsin
+            
+            new varsa ife girsin 
+            
+            new’in next’ne coordinate’mi atsin
+            
+            new’in isaretcisini coordinate’me atsin
+            
+        
+        ==
+        Push fonksiyonu lst_addfront yapiyor.
+        Width dongude kaldigi surece arttırıyorum.
+        Eger t_map tipindeki değişkenin height 0'a eşit ise t_map tipindeki değişkenimin width'ine, döngüde arttirdigim width degerini atıyorum
+        Degilse t_map tipindeki değişkenimin widthini, döngüde arttirdigim width'ye esit degilse hata durumu
+        ---
+        Artık verilerimizi dogru bir sekilde ayirdik renk bilgisine z düzlemindeki bilgiye duzgun bir sekilde sahibiz ilk basta Split ile boşluklardan ayirdigimiz veriyi boşaltıyoruz.
+        get_next_line ile okunan veriye free atiyoruz. ft_strdel fonksiyonu ile yapiyoruz bu islemi.
+        
+        - ft_strdel fonksiyonum parametre olarak 2 boyutlu karakter tipinde degisken aliyor.
+            - karakter tipindeki degiskenim varsa ve karakter tipindeki degiskenimin isaretcisi varsa karakter tipindeki isaretci verime free atiyorum ve null’a esitliyorum.
+        
+        t_map tipindeki değişkenimin height'ini arttırıyorum.
+        Eger haritamın z si renkleri doğru bir sekilde ayrılmadıysa hata durumu
+        \\\Son olarak get_next_line ile okuduğumuz veriyi donduruyoruz.cunku mainde bunun kontrolu vardi verinin okunup okunmadigini kontrol etmemiz gerekiyordu
+        
+    - fdf_init
+        - Mapi okuyup parsladıktan sonra sıra fdf_init yapmaya geliyor
+        fdf_init fonksiyonu parametre olarak map alacak
+        t_fdf tipinde bir değişken oluşturulacak
+        t_fdf tipinde bir değişkenime t_Fdf tipinde mallocla yer açılacak, acilmadiysa hata durumu
+        Fdf değişkeninin mlx değeri mlx_init fonksiyonuna gönderilecek,gonderilmediyse hata durumu
+        Fdf değişkeninin win değerine mlx_new_window fonksiyonunu gönderilicek. t_fdf tipindeki degiskenimizin mlx’ini alacak width ve height defineladığımız değerleri alacak ve son olarak acilan pencerede yukarida yazmasini istedeigimiz ismi alacak.
+            
+            olmadiysa hata durumu
+            Fdf değişkeninin img değerine mlx_new_inage fonksiyonunu gönderilecek.t_fdf tipindeki degiskenimizin mlx’ini alacak defineladğımız width ve height değerlerini alacak olmadiysa hata durumu 
+            Fdf değişkeninin data_addr değerine mlx_get_data_adrr fonksiyonunu gönderilecek ve parametre olarak fdf img, adresi bits_per_pixel, adresi size_line, adress endian,
+            Fdf değişkeninin map değerine parametre olarak aldığımız map değeri atanıcak
+            Ve en son mouse haraketleri için fdfin mouse değerine mouse tipinde yer açılacak 
+            
+            acilmadiysa hata durum
+            
+             fdf değişkeni return edilecek.
+            
+            mlx kütüphanesi, X Window System üzerinde Unix benzeri sistemlerde grafiksel uygulamalar oluşturmak için kullanılan bir kütüphanedir.
+            
+            - mlx_init, X sunucusu ile bağlantıyı başlatır ve yeni bir MLX bağlamı oluşturur.
+            - mlx_new_window, belirli bir boyutta ve başlıkta yeni bir pencere oluşturur.
+            - mlx_new_image, belirli bir boyutta ve derinlikte yeni bir resim oluşturur.
+            - mlx_get_data_addr, resmin ham verilerine erişmek için bir gösterici döndürür, bu gösterici resmin piksellerini doğrudan manipüle etmek için kullanılabilir.
+            
+            evet, **`fdf->data_addr`**
+             değişkeni **`mlx_get_data_addr`**
+             fonksiyonu ile atanır. Bu fonksiyon **`fdf->img`**
+             adlı resim verilerini bellekte tutan bir pointer döndürür ve aynı zamanda resmin her piksel için kullanılan bit sayısı (**`fdf->bits_per_pixel`**), her satır için kullanılan bayt sayısı (**`fdf->size_line`**), ve endianness (**`fdf->endian`**) gibi ek bilgiler de verir.
+            
+            Endianness, verilerin bellekte depolanması için belirli bir düzen olarak tanımlanır. İki farklı endianness vardır: Little Endian ve Big Endian.
+            
+            Little Endian, verilerin en küçük öğesi (en küçük adresli bit) en sola, en büyük öğesi (en büyük adresli bit) en sağa yazılır.
+            
+            Big Endian, verilerin en büyük öğesi en sola, en küçük öğesi en sağa yazılır.
+            
+            Endianness, verilerin okunması ve yorumlanması sırasında önemli bir rol oynar. Örneğin, veriler Little Endian olarak saklandığında, verinin en büyük öğesi en sola, en küçük öğesi ise en sağa yazılır. Eğer veriler Big Endian olarak saklanırsa, verinin en küçük öğesi en sola, en büyük öğesi ise en sağa yazılır.
+            
+            Endianness değeri, fdf->endian değişkenine kaydedilir ve verilerin nasıl yorumlandığını belirler.
+            
+    - -CONVERT.C- stack_to_arrays fonksiyonu void tipinde
+        
+        mainde tanimladigim t_coord_val tipindeki degiskenimizin adresini alacak ve mapimiizi alacak.
+        
+        stac_to_arrays fonksiyonu 2 boyutlu t_coord_val tipinde bir degisken birde t_map tipinde bir degisken alacak.
+        
+        t_coord_val tipinde isaretci bir degisken
+        
+        ssize_t tipinde bir degisken i
+        
+        size_t   tipinde bir degisken arr_size
+        
+        -CONVERT.C-
+        Sonra array size değişkenime mapin width değeri çarpı height değeri çarpı sizeof(int) değerini atıryoruz.
+        Sonra mapin coords_arr değerine arr size boyutunda yer açıyoruz, aynı işlemi Colors_arr değeri içinde yapıyoruz. acilmadiysa hata durumu
+        Index değerimizede width carpi height - 1 değerini atıyoruz.
+        Sonra i 0 dan büyük ve eşit olduğu sürece bir koşul açıyoruz ve coord değerini pop adlı fonksiyona gönderiyoruz ve bu fonksiyonun amacı stackimizde elemanlardan birini sırayla return etmek
+        
+        - pop fonksiyonu stack_to_arrays fonksiyonuma adres olarak gelen degiskeni alacak.
+            - Pop fonksiyonu bir "stack" yapısından üstteki elemanı almak için kullanılıyor. stack_to_arrays fonksiyonu içinde, pop fonksiyonu kullanılarak, stack yapısından üstteki eleman alınıp, işlemler yapılıyor ve sonrasında bu eleman siliniyor. Bu fonksiyonun amacı, stack yapısındaki elemanları sırayla almak ve işlem yapmak. Bu işlemleri pop fonksiyonu kullanmadan yapmak mümkün, ancak pop fonksiyonunun kullanımı bu işlemi daha okunaklı ve anlaşılır hale getirir.
+                
+                pop fonksiyonum 2 boyutlu t_coord_val tipinde bir degisken alacak.
+                
+                t_coord_val isaretci tipinde bir degisken.
+                
+                degiskenime null atiyorum cunku top değişkeni, pop fonksiyonu içinde stack yapısından alınan elemanın referansını saklamak için kullanılıyor. Öncelikle top değişkenine NULL atanmasının sebebi, stack yapısı boşsa veya geçersiz bir referans verilirse top değişkeni için bir değer döndürmemektir. Bu durumda, pop fonksiyonu NULL döndürür ve kullanıcıya boş stack olduğunu veya geçersiz bir referans verildiğini bildirir. 
+                
+                eger parametre olarak gelen degiskenim varsa ve onun isaretcisi var girsin
+                
+                null’atadagim degiskene isaretci olarak gelen degiskenimi atasin
+                
+                sonradan isaretci olarak atanan degiskenimede kendisinin next’ini atiyorum.
+                
+                son olarak top’u donduruyorum.
+                
+        
+        Sonra mapin coords_arr'nin o anki indeksine coord değişkeninin z değerini, aynı şekilde colors_arr değerinin o anki indeksinede coord değişkeninin color değerini atıyoruz
+        Eğer coord değişkeninin z değeri mapin z_max değerinden büyük ise mapin z_max değerine coord değişkeninin z değerini atıyoruz
+        Eğer coord değişkeninin z değeri mapin z_min değerinden küçük ise mapin z_min değerine coord değişkeninin z değerini atıyoruz
+        Indexi bir azaltıyor ve coord değişkenimiz yeni bir değer almadan önce onu frenliyoruz.
+        Bu döngüden çıktıktan sonrada mapin z_range değerine map z_max değeri eksi mapin z_min değerini atıyoruz. amacimiz
+        
+        Bu kod satırı, **`map->z_max`** ve **`map->z_min`** değişkenlerinden **`map->z_range`** değişkenine aralarındaki farkı atamaktadır. Özellikle, **`map->z_range`** değişkeni, koordinatlar arasındaki z ekseni değerlerinin en yüksek ve en düşük değerler arasındaki farkını temsil eder. Bu değer, daha sonra haritayı çizmek için kullanılabilir veya haritadaki herhangi bir noktanın hangi yükseklikte olduğunu belirlemek için kullanılabilir.**`z_range`** değişkeni, haritanın yükseklik değerleri arasındaki maksimum farkı ifade eder. Bu değer, haritadaki yükseklik değerlerinin çeşitliliğini temsil eder ve haritanın oluşturulması sırasında renklendirme işlemlerinde kullanılabilir. Örneğin, haritadaki yükseklik değerleri arasındaki fark yüksek olduğunda, renklendirme işlemlerinde daha fazla renk aralığı kullanılabilir ve harita daha canlı görünebilir.
+        
+        [data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2730%27%20height=%2730%27/%3e](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2730%27%20height=%2730%27/%3e)
+        
+    - t_fdf tipindeki degiskenimizin camerasina CAMERA_INIT(t_fdf tipindeki degiskeni atiyoruz)
+        
+        t_camera tipinde bir degisken olusturuyoruz.
+        
+        olusturdugumuz bu degiskene t_camera tipinde yer aciyoruz eger yer acilmazsa hata durumu.
+        
+        t_camera tipindeki degiskenimizin t_camera struct yapisinin verilerine 0 atiyoruz zoom haric
+        
+        t_camera tipindeki degiskenimizin zoom’una height / fdf→map→height / 2’y’ atiyoruz bu matematik islemi gorunecek haritanin en iyi sekidle gorunmesini sagliyor bunun yerine istedigimiz rakami yazabiliriz ama gozumuze guzel gozuken bu
+        
+        en son t_camera tipindeki degiskenimizi return ediyoruz 
+        
+    - draw fonksiyonumuz var void tipinde olacak.
+        
+        bu fonksiyon 2 parametre aliyor fdf→map ve t_fdf tipindeki degiskenimizi aliyor.
+        
+        2 tane int tipinde degisken olusturuyoruz.
+        
+        draw_background fonksiyonum var bu fonksiyonum parametre olarak gelen t_fdf tipindeki degiskenimi alacak
+        
+        - draw_background fonksiyonu
+            
+            isaretci int tipinde bir degisken *image
+            
+            int tipinde bir degisken i 
+            
+            ft_bzero kullanarak acilan pencerenin pixellerini 0liyorum yani acilan pencerede her yer siyah oluyor ben kendim renklendirecegim ve haritami olusturacagim.fdf→data_addr, width carpi height carpi fdf→bit_per_pixel / 8 yapiyrum ve bzero’ya gonderiyorum.fdf->bits_per_pixel / 8 değeri, 1 piksel için kaç bayt veri gerektiğini gösterir.o ekrandaki toplam bayt miktarını verir. WIDTH ve HEIGHT değerleri ekran genişliği ve yüksekliğini, fdf->bits_per_pixel değeri de bir piksel için kaç bit veri saklandığını gösterir. Bu nedenle, WIDTH * HEIGHT * (fdf->bits_per_pixel / 8) toplam bayt miktarını verir.
+            
+            int tipindeki degiskenimi sifirliyorum
+            
+            i height * widht’ten kucuk oldugu surece dongude kalsin
+            
+            eger i mod width menu_width’den kucukse isaretci int tipindeki degiskenimin isine menu_background’umu atiyorum
+            
+            degilse isaretci int tipindeki degiskenimin i’sine background’imi atiyorum ve bu sayede ana arkaplan ve menu arkaplan renklerini ayarlamis oluyorum 
+            
+            i’yi arttiriyorum, 
+            
+        
+        int tipindeki bir degiskenimi sifira esitliyorum
+        
+        bu degiskenim map’in height’den kucuk oldugu surece dongude kalsin
+        
+        ikinci int tipindeki degisknemi sifirliyorum
+        
+        bu degiskenimde map’in width’dan kucuk oldugu surece dongude kalsin 
+        
+        eger ikinci int tipindeki degiskenim fdf→map→width - 1’e esit degilse kosul saglansin
+        
+        - draw_line fonksiyonu 2 parametre aliyor, project’in return’u,project’in return’u ve parametre olarak gelen t_fdf tipindeki degiskenimi alacak
+            - project fonksiyonum 2 parametre aliyor biri new_point’in return’u digeri parametre olarak gelen t_fdf tipindeki degisken.
+                
+                t_point tipindeki degiskenimin x’ini fdf→camera→zoom ile carpiyorum
+                
+                t_point tipindeki degiskenimin y’ini fdf→camera→zoom ile carpiyorum
+                
+                t_point tipindeki degiskenimin z’ini fdf→camera→zoom ile carpiyorum
+                
+                t_point tipindeki degiskenimin x’ini fdf→map→width * fdf→camera→zoom / 2 fonksiyonundan cikariyorum.
+                
+                t_point tipindeki degiskenimin y’sini fdf→map→width * fdf→camera→zoom / 2 fonksiyonundan cikariyorum. 
+                
+                bu sayede zoom yaptiktan sonra ekrana gore zoom degerine gore ayarlanmis haritami goruyorum. Bu kod parçası, "t_point" türündeki bir nesnenin (p) boyutunu, "t_fdf" türündeki fdf verilerine göre ölçekler ve eksenel olarak döndürür. Bununla birlikte, p nesnesinin x ve y koordinatları da fdf verilerine göre ortalama bir değere göre çıkarılır ve p nesnesinin x ve y koordinatları, ekrana uygun bir şekilde yeniden hesaplanır.
+                
+                sirada rotate_x rotate_y rotate_z fonksiyonlarim var.
+                
+                - void tipinde olacak rotate_x t_point tipindeki degiskenimin y sinin adresini ve z’sinin adresini ve fdf→camera→alpha aliyor.
+                    
+                    int 
+                    
+                
+                eger fdf→camera→projection == iso ise 
+                
+                iso fonksiyonuma  t_point tipindeki degiskenimin x’nin adresini
+                
+                t_point tipindeki degiskenimin y’sinin adresini
+                
+                t_point tipindeki degiskenimin z’nin adresini gonderiyorum
+                
+                - iso fonksiyonum void tipinde olacak.
+                    
+                    iki tane int tipinde degisken
+                    
+                    ve olusturdugum degiskene sirasiyla parametre olarak gelen x ve y’mi atiyorum.
+                    
+                    x’ime olusturduupum int degiskenleri cikartip cos(0.523599) ile carpip atiyorum.
+                    
+                    y’me ise olusturdugum int degiskenleri topluyorum sin(0.523599) ile carpiyorum z den cikartip y’ye atiyorum.
+                    
+                - new_point fonksiyonum 3 parametre aliyor ve t_point tipinde olacak.olusturdugum int tipindeki degiskenler(x, y) ve parametre olarak gelen t_map tipindeki degiskenim.
+                    
+                    new_point fonksiyonum içinde t_point tipinde bir değişken ve index tutuyor. x, y ve map değerimin genişliğini get_index fonksiyonuna gönderip index değerine atıyorum. Point değişkenim bir yapı ve kendi içinde x, y ,z tutuyor. Bu sebeple point değişkeninin x değerine parametre olarak gelen x’i y değerine y’yi ve z değerine ise map parametremin coords_arr değerinin o anki indexini atıyorum. Bir nevi o anki x ve y değerlerindeki z(yükseklik) değerini bulmuş oluyorum. Şimdi ise point değerimin rengini atamada. mapimin o anki indexinde herhangi bir renk değeri yok ise otomatik olarak -1 return ediliyor. Eğer map değişkenimin colors_arr değerinin o anki indexi -1’e eşit ise point değişkenimin color değerine default color atıyorum, eğer -1 e eşit değil ise point değişkenimin o anki color değerine map değişkenimin colors_arr değerinin o anki indexini atıyorum. Daha sonra pointi return ediyorum.
+                    
+                    - Verilen x ve y koordinatlarını, map veri yapısının genişliğini kullanarak indeksini hesaplar.
+                    - İndeks kullanılarak, map veri yapısındaki coords_arr ve colors_arr dizilerinden z ve renk değerleri alınır.
+                    - Eğer renk değeri yoksa varsayılan renk olarak get_default_color fonksiyonundan renk alır.
+                    - Elde edilen x, y, z ve renk değerleriyle bir t_point nesnesi oluşturulur ve döndürür.
+                    - get_index
+                        
+                        get_index fonksiyonu x, y ve genişlik değerini parametre olarak alıyor. Bu fonksiyon tek satır y * genişlik + x return ediyor. Bir nevi o anki x ve y koordinatındaki indexi bulmuş oluyorum.
+                        
+                        - Verilen x, y ve width değerlerini kullanarak, bir 2D dizinin hangi düğümüne (index) karşılık geldiğini hesaplar.
+                        - Yani, belirli bir (x, y) koordinatının 2D dizideki indeksini bulur.
+                        - İndeks = (y * width + x) şeklinde hesaplanır.
+                    - get_default_color
+                        
+                        Bu fonksiyon parametre olarak z ve map değişkenini alıyor. İçinde bir tane double percentage değişkenimiz var. Map değişkeninin z_min değerini z_max değerini ve z değerini percent fonksiyonuna gönderip percentage değişkenimize atıyoruz. Dönen değere göre bir renk atıyoruz. Örnek olarak 0.2 den küçük ise kırmızı 0.4 den kücük ise bordo bunu 1.0 değeri tamamlanana kadar yapıyoruz ki elde etmek istediğimiz renk derinliğini sağlayabilelim.
+                        
+                        - percent
+                            
+                            percent fonksiyonu parametre olarak start(z_min), end(z_max) ve current(z) değerlerini alıyor. Ve içinde double türünde placement ve distance adlı değişkenler bulunduruyor. Placement değerine current - start değeri, distance değerine iste end- start değerini atıyoruz. Eğer distance 0’a eşit ise 1.0 return ediyoruz. Değil ise placement bölü distance değerini return ediyoruz.
+                            
+                    
+                    t_point degiskenimin x’ine (WIDTH - MENU_WIDTH) / 2 + fdf->camera->x_offset + MENU_WIDTH; bu islemi yapip topluyorum.
+                    
+                    t_point degiskenimin y’sine HEIGHT + fdf->map->height * fdf->camera->zoom) / 2 + fdf->camera->y_offset; bu islemi yapip topluyorum.
+                    
+                    t_point tipindeki degiskenimi return ediyorum.
+                    
+                
+                Mesela, bir 3D haritada genişliği 100, yüksekliği 50 olsun ve kamera zoom değeri 2 olsun. Bu durumda, noktaların x koordinatları, ekranın ortasına (50 * 2) = 100 olarak hesaplanır, y koordinatları ise (25 * 2) = 50 olarak hesaplanır.
+                Sonrasında "p.x -= (fdf->map->width * fdf->camera->zoom) / 2" satırı ile x koordinatları 100'e düşürülür, "p.y -= (fdf->map->height * fdf->camera->zoom) / 2" satırı ile y koordinatları 50'ye düşürülür.
+                Bu işlemler sonrası, noktalar ekranın ortasına çekilir ve harita daha iyi görünecektir. Ayrıca, kamera hareketlerinde haritada ortalama nokta ekranın ortasında kalır.
+                
+    - Bu x eksenini rotasyon yapmak için kullandığımız formül.
+        
+        ![rotation_matrix_x.svg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8dcebd9f-11cf-4ac5-99b6-67b7dfdf6cb3/rotation_matrix_x.svg)
+        
+    - sirada setup_controls fonksiyonum var void tipinde olacak ve benim klavye mouse vs. hareketlerimi izleyecek
+        
+        İşlev adı "mlx_hook" ve bu işlev, X Window System (X11) kullanarak grafik uygulamaları oluşturmak için kullanılan MLX (MinilibX) kütüphanesinin bir parçasıdır.
+        
+        Bu işlev çağrısının parametreleri şunlardır:
+        
+        - fdf->win: X Window System'te oluşturulan bir pencere nesnesinin adresidir.
+        - 2: Bu, X Window System tarafından tanımlanan bir X11 event tipidir ve "KEY_PRESS" (tuşa basma) olayını belirtir.
+        - 0: Bu, X Window System tarafından tanımlanmış bir X11 modifikatördür ve tuşa basma olayının hangi tuşlarla (örneğin, Shift, Ctrl, Alt) birlikte kullanıldığını belirtir.
+        - key_press: Bu, kullanıcı tarafından tanımlanmış bir işlev adıdır ve tuşa basma olayı oluştuğunda çalışacak olan işlevdir.
+        - fdf: Bu, kullanıcı tarafından tanımlanmış bir veri yapısının adresidir ve işlev içinde erişilmek istenen verilerin saklandığı yerdir.
+        
+        Bu işlev çağrısı, "mlx_hook" işlevinin çağrılmasıyla X Window System tarafından tanımlanan "KEY_PRESS" (tuşa basma) olayını yakalamak için bir işlevin tanımlanmasını sağlar. Tuşa basıldığında, "key_press" işlevi çalışacak ve "fdf" veri yapısındaki verilerle çalışacaktır.
+        
+        - key_press fonksiyonum int tipinde olacak parametre olarak int key void *param alacak
+            
+            Bu fonksiyon "key_press" adında bir anahtar basımı işleyicisidir ve iki girdi parametresi vardır: "key" ve "param". "key" anahtarın basılan tuşun değerini içerir ve "param" ise belirli bir veri yapısının (t_fdf) adresini içerir.
+            
+            Fonksiyon, basılan tuşun değerine göre çeşitli işlemler yapar ve sonunda "0" döndürür. Örneğin, eğer basılan tuş "MAIN_PAD_ESC" ise, program direk olarak sonlanır. Başka bir örnek olarak, eğer basılan tuş "MAIN_PAD_PLUS" veya "MAIN_PAD_MINUS" ise, "zoom" fonksiyonu çağrılır ve yakınlaştırma/uzaklaştırma işlemi yapılır.
+            
+            Diğer basılan tuş değerlerine göre de benzer şekilde diğer fonksiyonlar çağrılır ve işlemler yapılır, örneğin hareket etme, döndürme, düzleştirme, projeksiyon değiştirme gibi.
+            
+            t_fdf tipinde isaretci degisken 
+            
+            fdf degiskenime parametre olarak gelen degiskenimi typecast edip fdf’e atiyorum
+            
+            eger parametre olarak gelen key main_pad_esc’ye esit ise yani klavyedeki esc tusuma esit ise exit atiyorum
+            
+            eger klavyede bastigim tus + veya -’ye esit ise zoom fonksiyonuma gonderiyorum
+            
+            zoom fonksiyonum void tipinde int key ve t_fdf tipinde isaretci fdf aliyor
+            
+            -eger klavye’ye bastigim tus + ise veya mouse hareketim zoom yonune ise zoom’u arttir
+            
+            -eger -’ye esit ise veya mouse hareketim zoom’un tersi yonune ise zoom’u azaltiyorum.
+            
+            -eger fdf→camera→zoom 1 den kucuk ise fdf→camera→zoom’u 1’e esitliyorum
+            
+            kucultmeyi sinirlandiriyorum.
+            
+            yaptigim islemleri cizmesi icin draw fonksiyonuma fdf→map’i atiyorum ve fdf degiskenimi atiyorum.
+            
+            zoom bitti degilse klavyenin yon tuslari ile hareket ettirme zamani 
+            
+            move fonksiyonum var void tipinde olacak
+            
+            eger sag yon tusune esit ise fdf→camera→x_offset’imi -10 kaydiriyorum sol tarafa 10 birim kaydirmis oluyorum aynisi + yonde ve y ekseninde de aynisini yapiyorum ve draw fonksiyonuma yolluyorum
+            
+            zoom bitti yon tuslari ile mapi hareket ettirme bitti sira mapimi kac derece hangi tarafa dondurecegimi yapmam lazim.
+            
+            degilse key’im 0123456789 a esit ise rotate fonksiyonumu cagiriyorum
+            
+            rotate fonksiyonum void tipinde 
+            
+            eger key 2 tusuna esit ise fdf→camera→alpha’mi 0.05 arttiriyorum pozitif yonde hareket ettirmis oluyorum.8 tusuna esit ise alpha’mi -0.05 azaltiyorum.
+            
+            eger 4 tusuna bastiysam beta tusumu azaltiyorum. 6 tusuna bastigim zaman betayi arttiyorum.
+            
+            1 veya 3 tusuna bastigim zaman gamma’yi arttiriorum.
+            
+            7 veya 9 tusuna bastigim zaman gamayi azaltiyorum.
+            
+            cizmek icin draw fonksiyonuma gonderiyorum.
+
+
+
+- project fonksiyonu detayli aciklama
+    
+    ```c
+    t_point		project(t_point p, t_fdf *fdf)
+    {
+    p.x *= fdf->camera->zoom;
+    p.y *= fdf->camera->zoom;
+    p.z *= fdf->camera->zoom / fdf->camera->z_divisor;
+    p.x -= (fdf->map->width * fdf->camera->zoom) / 2; //1
+    p.y -= (fdf->map->height * fdf->camera->zoom) / 2; //1
+    rotate_x(&p.y, &p.z, fdf->camera->alpha);
+    rotate_y(&p.x, &p.z, fdf->camera->beta);
+    rotate_z(&p.x, &p.y, fdf->camera->gamma);
+    if (fdf->camera->projection == ISO)
+    iso(&p.x, &p.y, p.z);
+    p.x += (WIDTH - MENU_WIDTH) / 2 + fdf->camera->x_offset + MENU_WIDTH; //2 //2
+    p.y += (HEIGHT + fdf->map->height * fdf->camera->zoom) / 2 + fdf->camera->y_offset;
+    return (p);
+    }
+    ```
+    
+    1 nolu ve 2 nolu kod parcalarimin farki İlk kod satırı haritadaki x ve y eksenini haritadaki büyüklüğüne göre ortalama yapmaktadır. İkinci kod satırı ise harita ortalanmış halindeki x ve y eksenlerini, ekrana göre ortalamaktadır.
+    
+    Bu fonksiyon, t_point tipinde bir noktanın (p) çizilebilir pozisyonunu hesaplamak için kullanılır. t_fdf tipinde bir değişken (fdf) de bu fonksiyona gönderilir ve bu değişken içindeki veriler noktanın çizilebilir pozisyonunun hesaplanmasında kullanılır.
+    
+    1. Kod parçacığı (p.x *= fdf->camera->zoom; p.y *= fdf->camera->zoom; p.z *= fdf->camera->zoom / fdf->camera->z_divisor;): Noktanın x, y ve z koordinatları zoom değerine göre ölçeklenir.
+    2. Kod parçacığı (p.x -= (fdf->map->width * fdf->camera->zoom) / 2; p.y -= (fdf->map->height * fdf->camera->zoom) / 2;): Noktanın x ve y koordinatları haritanın genişliği ve yüksekliği kullanılarak ortalanır.
+    3. Kod parçacığı (rotate_x(&p.y, &p.z, fdf->camera->alpha); rotate_y(&p.x, &p.z, fdf->camera->beta); rotate_z(&p.x, &p.y, fdf->camera->gamma);): Noktanın y ve z koordinatları alpha açısına göre, x ve z koordinatları beta açısına göre ve x ve y koordinatları gamma açısına göre döndürülür.
+    4. Kod parçacığı (if (fdf->camera->projection == ISO) iso(&p.x, &p.y, p.z);): Eğer görüntünün projeksiyon türü ISO ise, noktanın x ve y koordinatları p.z değerine göre iso uygulanır.
+    5. Kod parçacığı (p.x += (WIDTH - MENU_WIDTH) / 2 + fdf->camera->x_offset + MENU_WIDTH; p.y += (HEIGHT + fdf->map->height * fdf->camera->zoom) / 2 + fdf->camera->y_offset;): Noktanın x ve y koordinatları ekranın ortalanması için aşağıdaki formüle göre hesaplanır: x = (WIDTH - MENU_WIDTH) / 2 + fdf->camera->x_offset + MENU_WIDTH, y = (HEIGHT + fdf->map->height * fdf->camera->zoom) / 2 +
+
+
+
+- put_pixel icin aciklamalar
+    
+    Byte başına piksel sayısı, ekranın bir byte içinde kaç pikselin temsil edildiğini gösterir. Örneğin, bir pikselin 24 bit olduğu bir ekrandaki byte başına piksel sayısı 3 olacaktır (24 bit / 8 bit = 3 byte).
+    
+    Bu değer, put_pixel() fonksiyonundaki yer hesaplamalarının doğruluğunu belirler ve bellekteki pixelin yerini belirler.
+    
+    fdf->size_line, ekranın bellekteki her satırın boyutunu (byte cinsinden) tutar. Bu değer, bellekteki her satırın birbirinden ayrılmasını ve her satırdaki piksellerin bellekteki yerlerinin belirlenmesini sağlar.
+    
+    put_pixel() fonksiyonundaki yer hesaplamaları, fdf->size_line değerini kullanarak yatay eksende (y koordinatı) bellekteki pixelin yerini hesaplar. Böylece, bellekteki her satır arasında geçiş yapılabilir ve her satırdaki piksellerin bellekteki yerleri belirlenebilir.
